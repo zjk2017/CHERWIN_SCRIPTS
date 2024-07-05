@@ -10,7 +10,7 @@ import time
 import requests
 from http import HTTPStatus
 from datetime import datetime
-
+import traceback
 NOW_TOOLS_VERSION = '2024.06.30'
 if os.path.isfile('DEV_ENV.py'):
     import DEV_ENV
@@ -357,8 +357,11 @@ def CHECK():
             return False
         else:
             return True
-    except:
-        print('获取CHERWIN_SCRIPT_CONFIG.json失败')
+    except Exception as e:
+        # 打印异常信息
+        print(e)
+        # 打印完整的堆栈跟踪信息
+        traceback.print_exc()
         return False
 
 

@@ -16,7 +16,7 @@ jobs:
 
         steps:
             - name: Checkout target repo
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4.1.7
 
             - name: Sync Upstream
               uses: zjk2017/Fork-Sync-With-Upstream-action@v3.4.1

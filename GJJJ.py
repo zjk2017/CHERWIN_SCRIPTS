@@ -1,7 +1,7 @@
 # !/usr/bin/python3
 # -- coding: utf-8 --
 # -------------------------------
-# ✨✨✨ @Author CHERWIN✨✨✨
+# ✨✨✨ @Author CHERWIN✨✨✨   bug 签到不加积分 2没有分享功能 3 没有转盘功能 4每周三会员日的游戏不一样
 # -------------------------------
 # cron "1 9 * * *" script-path=xxx.py,tag=匹配cron用
 # const $ = new Env('顾家家居小程序')
@@ -57,7 +57,7 @@ class RUN:
             "openid":openid,
             "unionid":unionid
         }
-        # print(self.token)
+        Log(self.token)
         last_info = split_info[len_split_info - 1]
         self.send_UID = None
         if len_split_info > 0 and "UID_" in last_info:
@@ -116,7 +116,7 @@ class RUN:
         Log('======= 刷新用户信息 =======')
         url = 'https://mc.kukahome.com/club-server/member/automaticLogin'
         response = self.make_request(url,params=self.token)
-        # print(response)
+        Log(response)
         if response.get('msg')== "成功":
             data = response.get('data','')
             AccessToken = data.get('AccessToken','')
@@ -438,7 +438,7 @@ if __name__ == '__main__':
     APP_NAME = '顾家家居小程序'
     ENV_NAME = 'GJJJ'
     CK_URL = 'https://mc.kukahome.com/club-server/member/automaticLogin'
-    CK_NAME = 'identityValue@openid@o98mO0xrQ9Jqp0DUsGpmfHpQm_pQ'
+    CK_NAME = 'identityValue@openid@unionnid'
     print(f'''
 ✨✨✨ {APP_NAME}签到✨✨✨
 ✨ 功能：
@@ -481,7 +481,7 @@ export SCRIPT_UPDATE = 'False' 关闭脚本自动更新，默认开启
         print(f"未填写{ENV_NAME}变量\n青龙可在环境变量设置 {ENV_NAME} 或者在本脚本文件上方将{CK_NAME}填入token =''")
         exit()
     tokens = CHERWIN_TOOLS.ENV_SPLIT(token)
-    # print(tokens)
+    print(tokens)
     if len(tokens) > 0:
         print(f"\n>>>>>>>>>>共获取到{len(tokens)}个账号<<<<<<<<<<")
         access_token = []

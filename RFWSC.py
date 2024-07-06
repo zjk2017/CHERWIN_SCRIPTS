@@ -387,7 +387,7 @@ export SCRIPT_UPDATE = 'False' 关闭脚本自动更新，默认开启
 ✨✨✨ @Author CHERWIN✨✨✨
 ''')
     local_script_name = os.path.basename(__file__)
-    local_version = '2024.05.24'
+    local_version = '2024.05.25'
     if IS_DEV:
         import_Tools()
     else:

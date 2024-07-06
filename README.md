@@ -1,3 +1,8 @@
+
+访问统计
+![img](https://profile-counter.glitch.me/zjk2017/count.svg)
+
+
 # <h1 align="center">✨CHERWIN脚本使用指南 ✨</h1>
 
 <h2 align="center"><a href="https://github.com/CHERWING/CHERWIN_SCRIPTS/wiki/%E2%9C%A8-CHERWIN%E8%84%9A%E6%9C%AC%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97-%E2%9C%A8">点击查看详细使用说明</a></h2>

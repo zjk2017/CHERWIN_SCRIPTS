@@ -2,7 +2,7 @@
 # -- coding: utf-8 --
 # -------------------------------
 # cron "0 0,8 * * " script-path=xxx.py,tag=匹配cron用
-# const $ = new Env('微信公众号：卡夫亨氏新厨艺')
+# const $ = new Env('微信公众号卡夫亨氏新厨艺')
 
 import os
 import random

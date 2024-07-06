@@ -240,6 +240,7 @@ class RUN:
 
             if hasSign:
                 Log(f'> 今日已签到✅')
+               
                 return True
             else:
                 Log(f'> 今日未签到❌')
@@ -251,7 +252,68 @@ class RUN:
     def sign(self):
         act_name = '签到'
         Log(f'\n====== {act_name} ======')
-        json_data = self.json_data.copy()
+        # json_data = self.json_data.copy()
+        json_data =json_data={
+            "appid": "wxe6d270a3e399ade9",
+            "basicInfo": {
+                "vid": 6001391100130,
+                "vidType": 2,
+                "bosId": 4001873629130,
+                "productId": 146,
+                "productInstanceId": 2623551130,
+                "productVersionId": "14026",
+                "merchantId": 2000058543130,
+                "tcode": "weimob",
+                "cid": 182682130
+            },
+            "extendInfo": {
+                "wxTemplateId": 7651,
+                "childTemplateIds": [
+                    {
+                        "customId": 90004,
+                        "version": "crm@0.1.24"
+                    },
+                    {
+                        "customId": 90002,
+                        "version": "ec@51.1"
+                    },
+                    {
+                        "customId": 90006,
+                        "version": "hudong@0.0.210"
+                    },
+                    {
+                        "customId": 90008,
+                        "version": "cms@0.0.446"
+                    }
+                ],
+                "analysis": [
+                    
+                ],
+                "quickdeliver": {
+                    "enable": False
+                },
+                "bosTemplateId": 1000001604,
+                "youshu": {
+                    "enable": False
+                },
+                "source": 1,
+                "channelsource": 5,
+                "refer": "onecrm-signgift",
+                "mpScene": 1027
+            },
+            "queryParameter": '',
+            "i18n": {
+                "language": "zh",
+                "timezone": "8"
+            },
+            "pid": "100001338635",
+            "storeId": "0",
+            "customInfo": {
+                "source": 0,
+                "wid": 11204789896
+            }
+        }
+
         json_data['customInfo'] = {
             "source": 0,
             "wid": self.wid
@@ -369,6 +431,7 @@ if __name__ == '__main__':
 ✨ 功能：
       签到
 ✨ 抓包步骤：
+✨                     0707可能还是有bug：
       打开{APP_NAME}
       授权登陆
       打开抓包工具

@@ -8,6 +8,7 @@
  * github仓库：https://github.com/CHERWING/CHERWIN_SCRIPTS
  * @Author CHERWIN
  *
+ =================增加WYSHYJS_useragent变量 解决无权限问题 fix 20240707 ArcadiaScriptPublic  频道：https://t.me/ArcadiaScript 群组：https://t.me/ArcadiaScriptPublic
  */
 
 //===============脚本版本=================//
@@ -15,6 +16,8 @@ let local_version = "2024.05.20";
 //=======================================//
 const APP_NAME = '网易生活研究社小程序'
 const ENV_NAME = 'WYSHYJS'
+const ENV_NAME2 = 'WYSHYJS_useragent'
+
 const $ = new Env('网易生活研究社小程序');
 const notify = $.isNode() ? require('./sendNotify') : '';
 const Notify = 1 		//0为关闭通知,1为打开通知,默认为1
@@ -34,8 +37,10 @@ request = request.defaults({jar: true});
 const {log} = console;
 let APP_CONFIG = "";
 let UserCookie = process.env[ENV_NAME] || false;
+let UserCookie2 = process.env[ENV_NAME2] || false;
 let SCRIPT_UPDATE = process.env.SCRIPT_UPDATE || true;
 let UserCookieArr = [];
+let UserCookieArr2 = [];
 let data = '';
 let msg = ``;
 let one_msg = '';
@@ -61,6 +66,7 @@ console.log(`✨✨✨ ${APP_NAME} ✨✨✨
 ` +
     '✨ 功能：\n' +
     '      积分签到\n' +
+    '✨ 重要=============================useragent改成自己的：\n' +
     '✨ 抓包步骤：\n' +
     '      打开抓包工具\n' +
     '      打开' +APP_NAME+'\n'+
@@ -78,6 +84,7 @@ console.log(`✨✨✨ ${APP_NAME} ✨✨✨
 
 //=======================================//
 UserCookieArr = ENV_SPLIT(UserCookie)
+UserCookieArr2 = ENV_SPLIT(UserCookie2)
 !(async () => {
         if (!(UserCookieArr)) {
             console.log(`未定义${ENV_NAME}变量`)
@@ -87,12 +94,13 @@ UserCookieArr = ENV_SPLIT(UserCookie)
             await getVersion();
             Log(`\n 脚本执行✌北京时间(UTC+8)：${new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60 * 1000 + 8 * 60 * 60 * 1000).toLocaleString()} `)
         console.log(`\n================ 共找到 【${UserCookieArr.length}】 个账号 ================ \n================ 版本对比检查更新 ================`);
+        
         if (await compareVersions(local_version, APP_CONFIG['NEW_VERSION'])){
                 Log(`\n 当前版本：${local_version}`)
                 Log(`\n 最新版本：${APP_CONFIG['NEW_VERSION']}`)
                 if (SCRIPT_UPDATE==true){
                     console.log('开始更新脚本')
-                    const fileUrl = `https://github.com/CHERWING/CHERWIN_SCRIPTS/raw/main/${ENV_NAME}.js`;
+                    const fileUrl = `http://gh.tt.ma/https://github.com/CHERWING/CHERWIN_SCRIPTS/raw/main/${ENV_NAME}.js`;
                     const downloadPath = `./${ENV_NAME}.js`;
                     downloadFile(fileUrl, downloadPath)
                 }
@@ -100,13 +108,19 @@ UserCookieArr = ENV_SPLIT(UserCookie)
         }else{
             console.log(`版本信息：${local_version} ，已是最新版本无需更新开始执行脚本`)
         }
+         for (let index = 0; index < UserCookieArr2.length; index++) {
+
+                 console.log(UserCookieArr2[index])
+                 useragent = UserCookieArr2[index];//有bug 应该加到一个参数 别加到第二个参数
+            }
+
             for (let index = 0; index < UserCookieArr.length; index++) {
                 one_msg = ''
                 let send_UID = ''
                 num = index + 1
                 Log(`\n================ 开始第 ${num} 个账号 --------------->>>>>`)
 
-                // console.log(UserCookieArr[index])
+                console.log(UserCookieArr[index])
                 let split_info = UserCookieArr[index].split("@");
                 userId = split_info[0];
                 userToken = split_info[1];
@@ -151,6 +165,8 @@ UserCookieArr = ENV_SPLIT(UserCookie)
                     Log('未检测到wxpusher UID，不执行一对一推送❌')
                 }
             }
+
+           
             Log(APP_CONFIG['GLOBAL_NTC'])
             await SendMsg(msg);
         }
@@ -160,7 +176,8 @@ UserCookieArr = ENV_SPLIT(UserCookie)
     .finally(() => $.done())
 async function compareVersions(localVersion, serverVersion) {
     const localParts = localVersion.split('.'); // 将本地版本号拆分成数字部分
-    const serverParts = serverVersion.split('.'); // 将服务器版本号拆分成数字部分
+     Log(`serverVersion${serverVersion}】❌`);
+    const serverParts = serverVersion.split('.'); // 将服务器版本号拆分成数字部分          
 
     for (let i = 0; i < localParts.length && i < serverParts.length; i++) {
         const localNum = parseInt(localParts[i]);
@@ -476,15 +493,18 @@ async function getMemberInfo(timeout = 2000) {
                 Connection: 'keep-alive',
                 'userId': userId,
                 'token': userToken,
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a13) XWEB/9129',
+                'User-Agent': useragent,
                 Referer: 'https://servicewechat.com/wx91a054c39722497e/59/page-frame.html'
             },
         };
+                        console.log(userId)
+                        console.log(userToken)
+
         axios.request(options).then(function (response) {
             try {
                 var data = response.data;
-                // console.log(data)
-                // console.log(data.result)
+                console.log(data)
+                console.log(data.result)
                 let result = data.result;
                 if (data.code = 200) {
                     userPhone = result.phone
@@ -500,9 +520,9 @@ async function getMemberInfo(timeout = 2000) {
                                 "newToken":userNewToken
                         };
                         saveUserData(CASH_PATH, newData)
-                        // Log(`>手机号：【${userPhone}】`)
-                        // Log(`>unionId：【${userUnionid}】`)
-                        // Log(`>openid：【${userOpenid}】`)
+                        Log(`>手机号：【${userPhone}】`)
+                        Log(`>unionId：【${userUnionid}】`)
+                        Log(`>openid：【${userOpenid}】`)
                     }else{
                         isLogin = false
                     }
@@ -534,7 +554,7 @@ async function get_SING_URL(timeout = 2000) {
                 Connection: 'keep-alive',
                 'userId': userId,
                 'token': userToken,
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a13) XWEB/9129',
+                'User-Agent': useragent,
                 Referer: 'https://servicewechat.com/wx91a054c39722497e/59/page-frame.html'
             },
         };
@@ -1200,7 +1220,8 @@ function modify() {
 function getVersion(timeout = 3 * 1000) {
     return new Promise((resolve) => {
         let url = {
-            url: `https://py.cherwin.cn/CHERWIN_SCRIPT_CONFIG.json`,
+                url: `http://gh.tt.ma/https://github.com/zjk2017/CHERWIN_SCRIPTS/blob/main/CHERWIN_SCRIPT_CONFIG.json`,//url: `https://py.cherwin.cn/CHERWIN_SCRIPT_CONFIG.json`,
+
         }
         $.get(url, async (err, resp, data) => {
             try {
@@ -1217,6 +1238,8 @@ function getVersion(timeout = 3 * 1000) {
                 // console.log(globalNtc)
                 // 将获取到的值作为对象返回
                 APP_CONFIG ={ 'NEW_VERSION':newVersion, 'NTC':ntc, 'GLOBAL_NTC_HTML':globalNtcHtml,'GLOBAL_NTC':globalNtc }
+
+
                 resolve(APP_CONFIG);
 
             } catch (e) {

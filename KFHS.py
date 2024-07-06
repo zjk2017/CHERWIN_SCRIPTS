@@ -283,11 +283,11 @@ class RUN:
             username = username_list[self.index-1]
             now_id = userid_list[self.index-1]
             Log(f'\n当前用于助力用户:【{username}】 ID:【{now_id}】')
-            self.helpAuthor(659402, cookbook_id, now_id)
-            self.helpAuthor(659403, cookbook_id, now_id)
-            self.helpAuthor(659404, cookbook_id, now_id)
-            self.helpAuthor(659405, cookbook_id, now_id)
-            self.helpAuthor(659406, cookbook_id, now_id)
+            self.helpAuthor(659125, cookbook_id, now_id)
+            # self.helpAuthor(659403, cookbook_id, now_id)
+            # self.helpAuthor(659404, cookbook_id, now_id)
+            # self.helpAuthor(659405, cookbook_id, now_id)
+            # self.helpAuthor(659406, cookbook_id, now_id)
             self.recordScoreShare(cookbook_id, now_id)
             self.sendMsg(True)
             return True

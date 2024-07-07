@@ -225,6 +225,8 @@ class RUN:
         url = f"{self.baseUrl}onecrm/mactivity/sign/misc/sign/activity/c/signMainInfo"
         response = self.make_request(url, data=json_data)
         # print(response)
+        print(f'> 获取签到状态 response {act_name}')
+
         if response.get('errmsg', False) == "成功" and response.get('data', {}) != {}:
             print(f'> {act_name}成功！✅')
             data = response.get('data', {})
@@ -345,6 +347,8 @@ class RUN:
         url = f"{self.baseUrl}onecrm/point/myPoint/getSimpleAccountInfo"
         response = self.make_request(url, data=json_data)
         # print(response)
+        Log(f'> 获取积分详情response {response}')
+
         if response.get('errmsg', False) == "success" and response.get('data', {}):
             print(f'> {act_name}成功！✅')
             data = response.get('data', {})

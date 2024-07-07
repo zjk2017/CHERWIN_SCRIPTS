@@ -1,8 +1,9 @@
 # !/usr/bin/python3
 # -- coding: utf-8 --
 # -------------------------------
-# cron "5 11 * * *" script-path=xxx.py,tag=匹配cron用
+# cron: 5 11 * * *
 # const $ = new Env('hotwind热风微商城小程序')
+# 抓 xapi.weimob.com               ck名称 RFWSC
 import os
 import random
 import time

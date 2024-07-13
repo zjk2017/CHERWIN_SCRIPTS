@@ -378,7 +378,19 @@ def GJJJ_SIGN():
     }
     return new_data
 
-
+def GJJJ_TXP_SIGN():
+    app_id = "877139"#877139
+    app_crypto = "j73mF4hEHejic4hr"
+    timestamp = int(time.time() * 1000)
+    # timestamp = 1715180892075
+    text = f"{app_id}{app_crypto}{timestamp}"
+    sign = hashlib.md5(text.encode()).hexdigest()
+    new_data = {
+        'timestamp': str(timestamp),
+        "sign": sign
+    }
+    return new_data
+    
 def KWW_SIGN(memberId):
     timestamp = int(time.time() * 1000)
     random_num = random.randint(0, 31)

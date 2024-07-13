@@ -147,6 +147,12 @@
         "NTC": "",
         "ENABLE": true
       },
+      "txp": {
+        "NEW_VERSION": "2024.06.30",
+        "APP_NAME": "顾家天禧派小程序",
+        "NTC": "",
+        "ENABLE": true
+      },
       "EMS": {
         "NEW_VERSION": "2024.05.23",
         "APP_NAME": "EMS邮惠中心小程序",

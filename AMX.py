@@ -180,10 +180,10 @@ class RUN:
             self.get_Point(True)
             # self.daily_sign()
 
-            self.sendMsg()
+            # self.sendMsg()
             return True
         else:
-            self.sendMsg()
+            # self.sendMsg()
             return False
 
     def sendMsg(self):

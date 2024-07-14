@@ -371,7 +371,7 @@ def CHECK():
     server_script_url = f'https://github.com/zjk2017/CHERWIN_SCRIPTS/raw/main/{TOOLS_NAME}'
     
     try:
-        response = requests.get(f'{baseurl}CHERWIN_SCRIPT_CONFIG.json', verify=False)
+        response = requests.get(f'{baseurl}CHERWIN_SCRIPT_CONFIG.json', verify=False, timeout=10.0)
         response.encoding = 'utf-8'
         CHERWIN_SCRIPT_CONFIG = response.json()
         

@@ -1,9 +1,9 @@
 # !/usr/bin/python3
 # -- coding: utf-8 --
 # -------------------------------
-# ✨✨✨ @Author CHERWIN✨✨✨   bug 签到不加积分 2没有分享功能 3 没有转盘功能 4每周三会员日的游戏不一样
+# fix  20240711 ArcadiaScriptPublic  频道：https://t.me/ArcadiaScript 群组：https://t.me/ArcadiaScriptPublic 1修复签到不加积分 2增加分享功能 3 增加转盘功能 4每周三会员日的游戏不一样手动完成吧 23没公开 
 # -------------------------------
-# cron "1 9 * * *" script-path=xxx.py,tag=匹配cron用
+# cron: 1 9 * * *
 # const $ = new Env('顾家家居小程序')
 import os
 import random

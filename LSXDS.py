@@ -1,10 +1,14 @@
-# !/usr/bin/python3
-# -- coding: utf-8 --
-# -------------------------------
-# ✨✨✨ @Author CHERWIN✨✨✨
-# -------------------------------
-# cron "1 8 * * *" script-path=xxx.py,tag=匹配cron用
-# const $ = new Env('乐事心动社小程序')
+"""
+new Env("乐事心动社")
+cron: 43 7 * * *
+微信小程序乐事心动社
+实物毛,兑换了个小包包,女朋友挺喜欢,如果不喜欢那不喜欢的是你
+cookie不会更改的,抓一次就不用管了
+export lsxdscks='authorization#memberId'
+邀请扫码:https://pepsicocampuscrmstgblob.blob.core.chinacloudapi.cn/pepsicocampuscrmstgblob/FAQ_202310201504181814.png
+fix 20240625 ArcadiaScriptPublic  频道：https://t.me/ArcadiaScript 群组：https://t.me/ArcadiaScriptPublic
+增加打印签到信息
+"""
 
 import os
 import random

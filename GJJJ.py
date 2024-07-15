@@ -1,10 +1,9 @@
 # !/usr/bin/python3
 # -- coding: utf-8 --
 # -------------------------------
-# ✨✨✨ @Author CHERWIN✨✨✨   
-# fix  20240711 ArcadiaScriptPublic  频道：https://t.me/ArcadiaScript 群组：https://t.me/ArcadiaScriptPublic 1修复签到不加积分 2增加分享功能 3 增加转盘功能 4每周三会员日的游戏不一样手动完成吧 23没公开 
+# ✨✨✨ @Author CHERWIN✨✨✨   bug 签到不加积分 2没有分享功能 3 没有转盘功能 4每周三会员日的游戏不一样
 # -------------------------------
-# cron: 1 9 * * *
+# cron "1 9 * * *" script-path=xxx.py,tag=匹配cron用
 # const $ = new Env('顾家家居小程序')
 import os
 import random
@@ -173,27 +172,21 @@ class RUN:
             Log(f'>可能token失效了❌,{response}')
             return False
 
-    def signIn(self):
-        Log('======= 开始签到 =======')
-        # url = 'https://mc.kukahome.com/club-server/front/member/signIn'
-        url = 'https://mc.kukahome.com/integral-server/scenePoint/scene/point'
-        # data={
-        #     "identityType":"mobile",
-        #     "identityValue":self.mobile,
-        #     "membershipId":self.membershipId
-        # }
+    def checkSign(self):
+        Log('======= 查询签到状态 =======')
+        url = 'https://mc.kukahome.com/club-server/front/member/calendar'
         data={
-            "scene": "sign",
-            "memberId": self.membershipId,
-            "brandCode": "K001"
-        }
-       
+            "t":int(time.time()*1000),
+            "membershipId":self.membershipId
+              }
         response = self.make_request(url,params=data)
-        # print(response)
-        if response.get('code')== 0:
-            datanum = response.get('data',0)
-            print(f'✅ 获得积分{datanum}')
-            Log('>签到成功！✅ ')
+        if response:
+            isTodaySigned = response.get('isTodaySigned',False)
+            if not isTodaySigned:
+                Log('>今日未签到')
+                self.signIn()
+            else:
+                Log('>今日已签到✅')
             return True
         else:
             Log(f'>可能token失效了❌,{response}')
@@ -201,19 +194,19 @@ class RUN:
 
     def signIn(self):
         Log('======= 开始签到 =======')
-        url = 'https://mc.kukahome.com/club-server/front/member/signIn'
+        url = 'https://mc.kukahome.com/integral-server/scenePoint/scene/point'
         data={
-            "identityType":"mobile",
-            "identityValue":self.mobile,
-            "membershipId":self.membershipId
+            "scene": "sign",
+            "memberId": self.membershipId,
+            "brandCode": "K001"
         }
         response = self.make_request(url,params=data)
         # print(response)
-        if response.get('status')== 200:
-            data = response.get('data',[])
-            success = data.get('success',False)
-            if success:
-                Log('>签到成功！✅')
+        if response.get('code')== 0:
+              datanum = response.get('data',0)
+              print(f'✅ 获得积分{datanum}')
+              Log('>签到成功！✅')
+              return True
         else:
             Log(f'>可能token失效了❌,{response}')
             return False

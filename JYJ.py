@@ -144,8 +144,8 @@ class RUN:
             mx_list = mx.split('@')
             for num, mx_item in enumerate(mx_list, start=1):
                 latitude,longitude= mx_item.split('&')
-                print(f"\n纬度={latitude}\n经度={longitude")
-                return selected_region, latitude, longitude
+                print(f"\n纬度={latitude}\n经度={longitude}")
+                return latitude, longitude
 
     def generate_positive_comment(self):
         subjects = [
@@ -239,7 +239,26 @@ class RUN:
         else:
             print(response)
             return False
+    def sign(self, END=False):
+        act_name = '签到'
+        # 使用 Log 或 print 打印操作名
+        log_or_print = Log if END else print
+        log_or_print(f'\n====== {act_name} ======')
 
+        url = f"{self.baseUrl}jingyoujia/taskContinuousRecord"
+        response = self.make_request(url, method='post')
+        if response.get('code', -1) == 200:
+            print(f'{act_name}成功！✅')
+            # data = response.get('data', {})
+            # totalIntegral = data.get('totalIntegral', '')
+            # log_or_print(f"> 执行{'后' if END else '前'}积分：{totalIntegral}")
+            return True
+        elif not response:
+            Log(f"> 账号 {self.index}: ck过期 请重新抓取❌")
+            return False
+        else:
+            print(response)
+            return False
     def get_TopicList(self):
         act_name = '获取文章列表'
         print(f'\n====== {act_name} ======')
@@ -710,6 +729,8 @@ class RUN:
             self.game_userInfo()
             self.game_userInfo(True)
             self.currentGrowMedicine()
+            # 要解密body的
+            # self.sign(True)
             self.get_user_point(True)
             self.sendMsg()
             return True
@@ -804,6 +825,7 @@ export SCRIPT_UPDATE = 'False' 关闭脚本自动更新，默认开启
 1修复使用外地经纬度问题，变量为JYJCITY 格式 {CK_EX2}{CK_EX3} 自己经纬度更靠谱
 2修复取消点赞失败
 3修复获取总积分不正确问题
+4签到抽奖暂时手动吧
 ✨✨✨
 ''')
     local_script_name = os.path.basename(__file__)

@@ -8,7 +8,7 @@ import os
 import random
 import time
 import urllib
-
+from datetime import datetime
 import requests
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad
@@ -41,8 +41,7 @@ def Log(cont=''):
 
 
 # 请保留作者邀请，谢谢
-Author_inviteCustId = ['1797269977598922752', '1797253239272509440', '1797354681178132480', '787259516457639936',
-                       '1797356377962844160']
+Author_inviteCustId = ['1706225299127144448']
 
 
 class RUN:
@@ -117,28 +116,36 @@ class RUN:
         return encrypted_base64
 
     def random_city_coordinates(self):
-        print('\n====== 随机选择定位 ======')
+        print('\n====== 环境变量定位信息 ======')
         # 定义各个地区的经纬度边界（大致范围）
-        regions = {
-            "北京": {"min_lat": 39.26, "max_lat": 41.03, "min_lon": 115.25, "max_lon": 117.30},
-            "上海": {"min_lat": 30.40, "max_lat": 31.53, "min_lon": 120.51, "max_lon": 122.12},
-            "浙江": {"min_lat": 27.10, "max_lat": 31.53, "min_lon": 118.00, "max_lon": 123.00},
-            "深圳": {"min_lat": 22.45, "max_lat": 22.75, "min_lon": 113.75, "max_lon": 114.63},
-            "广州": {"min_lat": 22.26, "max_lat": 23.92, "min_lon": 112.57, "max_lon": 114.03},
-            "江苏": {"min_lat": 30.75, "max_lat": 35.20, "min_lon": 116.18, "max_lon": 121.56},
-            "福建": {"min_lat": 23.50, "max_lat": 28.22, "min_lon": 116.40, "max_lon": 120.43}
-        }
+        # regions = {
+        #     "北京": {"min_lat": 39.26, "max_lat": 41.03, "min_lon": 115.25, "max_lon": 117.30},
+        #     "上海": {"min_lat": 30.40, "max_lat": 31.53, "min_lon": 120.51, "max_lon": 122.12},
+        #     "浙江": {"min_lat": 27.10, "max_lat": 31.53, "min_lon": 118.00, "max_lon": 123.00},
+        #     "深圳": {"min_lat": 22.45, "max_lat": 22.75, "min_lon": 113.75, "max_lon": 114.63},
+        #     "广州": {"min_lat": 22.26, "max_lat": 23.92, "min_lon": 112.57, "max_lon": 114.03},
+        #     "江苏": {"min_lat": 30.75, "max_lat": 35.20, "min_lon": 116.18, "max_lon": 121.56},
+        #     "福建": {"min_lat": 23.50, "max_lat": 28.22, "min_lon": 116.40, "max_lon": 120.43}
+        # }
 
-        # 随机选择一个地区
-        selected_region = random.choice(list(regions.keys()))
-        region = regions[selected_region]
+        # # 随机选择一个地区
+        # selected_region = random.choice(list(regions.keys()))
+        # region = regions[selected_region]
 
-        # 随机生成该地区的经纬度，并保留15位小数
-        latitude = round(random.uniform(region["min_lat"], region["max_lat"]), 15)
-        longitude = round(random.uniform(region["min_lon"], region["max_lon"]), 15)
-        print(f"随机生成的【{selected_region}】境内经纬度坐标：\n纬度={latitude:.15f}\n经度={longitude:.15f}")
+        # # 随机生成该地区的经纬度，并保留15位小数
+        # latitude = round(random.uniform(region["min_lat"], region["max_lat"]), 15)
+        # longitude = round(random.uniform(region["min_lon"], region["max_lon"]), 15)
 
-        return selected_region, latitude, longitude
+        res = ''
+        mx = os.environ.get('JYJCITY')
+        if not mx:
+            print("请设置环境变量在运行")
+        else:
+            mx_list = mx.split('@')
+            for num, mx_item in enumerate(mx_list, start=1):
+                latitude,longitude= mx_item.split('&')
+                print(f"\n纬度={latitude}\n经度={longitude")
+                return selected_region, latitude, longitude
 
     def generate_positive_comment(self):
         subjects = [
@@ -209,13 +216,22 @@ class RUN:
         # 使用 Log 或 print 打印操作名
         log_or_print = Log if END else print
         log_or_print(f'\n====== {act_name} ======')
-        url = f"{self.baseUrl}jingyoujia/customer/queryIntegralLog?changeDirection=1&dateType=0"
+        # 获取当前日期和时间
+        now = datetime.now()
+
+        # 获取当前年份和月份，并格式化为字符串 "YYYY-MM"
+        current_year_month = now.strftime("%Y-%m")
+
+        url = f"{self.baseUrl}jingyoujia/customer/queryIntegralLogV2?changeDirection=1&yearAndMonth={current_year_month}"
+        # https://jjw.jingjiu.com/app-jingyoujia/app/jingyoujia/customer/queryIntegralLogV2?changeDirection=1&yearAndMonth=2024-07
         response = self.make_request(url, method='get')
         if response.get('code', -1) == 200:
             print(f'{act_name}成功！✅')
             data = response.get('data', {})
-            totalIncIntegral = data.get('totalIncIntegral', '')
-            log_or_print(f"> 执行{'后' if END else '前'}积分：{totalIncIntegral}")
+            # totalIncIntegral = data.get('totalIncIntegral', '')
+            totalIntegral = data.get('totalIntegral', '')
+            # log_or_print(f"> 执行{'后' if END else '前'}积分：{totalIncIntegral}")
+            log_or_print(f"> 执行{'后' if END else '前'}积分：{totalIntegral}")
             return True
         elif not response:
             Log(f"> 账号 {self.index}: ck过期 请重新抓取❌")
@@ -241,7 +257,7 @@ class RUN:
 
             print(f"> 随机文章【{topic}】 id：【{topicId}】")
             self.sendTopicLike(topicId, '点赞')
-            random_delay(3, 5)
+            random_delay(5, 8)
             self.sendTopicLike(topicId, '取消点赞')
             random_delay()
             self.addComment(topicId)
@@ -392,6 +408,8 @@ class RUN:
             "lat": self.lat,
             "lon": self.lon
         }
+        print(f'>调试 {json_data}')
+
         response = self.make_request(url, json_data=json_data)
         if response.get('code', -1) == 200:
             print(f'> {act_name}成功！✅')
@@ -684,7 +702,8 @@ class RUN:
     def main(self):
         Log(f"\n开始执行第{self.index}个账号--------------->>>>>")
         if self.get_user_info():
-            self.region, self.lat, self.lon = self.random_city_coordinates()
+            # self.region, self.lat, self.lon = self.random_city_coordinates()
+            self.lat, self.lon = self.random_city_coordinates()
             self.everyDayWaterStatus()
             self.invite()
             self.taskList()
@@ -753,9 +772,14 @@ def import_Tools():
 if __name__ == '__main__':
     APP_NAME = '劲友家小程序'
     ENV_NAME = 'JYJ'
+    ENV_NAME2 = 'JYJCITY'
     CK_URL = 'jjw.jingjiu.com请求头'
     CK_NAME = 'authorization'
+    CK_NAME2 = 'latitude'
+    CK_NAME3 = 'longitude'
     CK_EX = 'JYJwx eyJ0eXAiOxxxxx'
+    CK_EX2 = '35.11111xxxxx'
+    CK_EX3 = '119.1111J0eXAiOxxxxx'
     print(f'''
 ✨✨✨ {APP_NAME}脚本✨✨✨
 ✨ 功能：
@@ -764,17 +788,23 @@ if __name__ == '__main__':
       打开{APP_NAME}
       授权登陆
       打开抓包工具
-      找{CK_URL}{CK_NAME}
-参数示例：{CK_EX}
+      找{CK_URL}{CK_NAME} {CK_NAME2} {CK_NAME3}
+参数示例：{CK_EX}{CK_EX2}{CK_EX3}
 ✨ ✨✨wxpusher一对一推送功能，
   ✨需要定义变量export WXPUSHER=wxpusher的app_token，不设置则不启用wxpusher一对一推送
   ✨需要在{ENV_NAME}变量最后添加@wxpusher的UID
 ✨ 设置青龙变量：
 export {ENV_NAME}='{CK_NAME}参数值'多账号#或&分割
+export {ENV_NAME2}='{CK_NAME2}{CK_NAME3}参数值'多账号#或&分割
 export SCRIPT_UPDATE = 'False' 关闭脚本自动更新，默认开启
 ✨ ✨ 注意：抓完CK没事儿别打开小程序，重新打开小程序请重新抓包
 ✨ 推荐cron：5 10 * * *
 ✨✨✨ @Author CHERWIN✨✨✨
+✨✨✨ @Author2 ArcadiaScriptPublic  频道：https://t.me/ArcadiaScript 群组：https://t.me/ArcadiaScriptPublic
+1修复使用外地经纬度问题，变量为JYJCITY 格式 {CK_EX2}{CK_EX3} 自己经纬度更靠谱
+2修复取消点赞失败
+3修复获取总积分不正确问题
+✨✨✨
 ''')
     local_script_name = os.path.basename(__file__)
     local_version = '2024.06.03'

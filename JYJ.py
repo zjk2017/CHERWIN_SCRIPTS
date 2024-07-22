@@ -513,7 +513,7 @@ class RUN:
                         random_delay(3, 5)
                 elif name == '订阅提醒领水滴':
                     self.subscribe()
-                elif name == '【翻倍】健康打卡领水滴':
+                elif name == '健康打卡领水滴':
                     self.photoPunch()
                 random_delay()
             return True

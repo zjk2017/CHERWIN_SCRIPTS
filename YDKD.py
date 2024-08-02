@@ -14,6 +14,7 @@
 # 参数示例：at965eoakumxxxxxxxx
 # ✨ 设置青龙变量：
 # export YDKD='openID参数值'多账号#或&分割
+=======0802 加了一个ocrserver  修复抽奖 ====
 # export SCRIPT_UPDATE = 'False' 关闭脚本自动更新，默认开启
 # ✨ ✨ 注意：抓完CK没事儿别打开小程序，重新打开小程序请重新抓包
 # ✨ 推荐cron：0 6 * * *
@@ -77,7 +78,19 @@ class RUN:
             'Referer': 'https://op.yundasys.com/mb-ext-channel/index.html',
             'Accept-Language': 'zh-CN,zh'
         }
-
+        self.yzmheaders = {
+            'Host': 'mbhtml.yundasys.com',
+            'Authorization': self.token,
+            'Accept': 'application/json, text/plain, */*',
+            'X-Requested-With': 'XMLHttpRequest',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF XWEB/6945',
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Sec-Fetch-Site': 'same-origin',
+            'Sec-Fetch-Mode': 'cors',
+            'Sec-Fetch-Dest': 'empty',
+            'Referer': 'https://mbhtml.yundasys.com/mb-ext-channel/index.html',
+            'Accept-Language': 'zh-CN,zh'
+        }
         self.baseUrl = 'https://op.yundasys.com/gateway/ydmb-integral/ydintegral/'
         self.news_List = []
         self.list_index = 0
@@ -104,14 +117,84 @@ class RUN:
             Log('可能token失效了')
             return False
 
+    def get_yzm_x(self,jigsawImageUrl,originalImageUrl):
+        # Log('>>>>>>获取验证码x坐标')
+        # originalImageUrl背景
+        json_data = {'slidingImage': jigsawImageUrl, 'backImage': originalImageUrl}
+        xheaders={'Content-Type': 'application/json'}
+        try:
+            OCR_SERVER = os.environ.get('OCR_SERVER')
+            response = s.post(f'{OCR_SERVER}/capcode', headers=xheaders,json=json_data)
+
+            # 检查响应状态码，确保请求成功
+            response.raise_for_status()  # 如果响应状态码不是200系列，将抛出HTTPError异常
+            
+            # 尝试将响应内容解析为JSON
+            res = response.json()
+            
+            # 从响应的JSON数据中提取'result'字段
+            x = res.get('result', 0)  # 使用.get()可以安全地处理字典中不存在的键，返回None或其他默认值
+            
+            # 现在你可以安全地使用x了
+            print(f"验证码x坐标计算成功")
+        except requests.RequestException as e:
+            # 处理所有来自requests的异常，比如连接错误、超时、HTTP错误等
+            print(f"请求发生错误: {e}")
+        except ValueError as e:
+            # 如果response.json()失败（比如响应不是有效的JSON），则会抛出ValueError
+            print(f"响应不是有效的JSON格式: {e}")
+        except Exception as e:
+            # 处理其他可能的异常
+            print(f"发生未知错误: {e}")
+
+        return x
+
+    def get_yzm(self):
+        # Log('>>>>>>获取验证码信息')
+        json_data =  {
+            "client": "mobile",
+            "slideImageWidth": 327,
+            "type": "slide",
+            "reqTime":int(time.time()),
+            "accountId":  self.token,
+            "accountSrc": "wxapp"
+        }
+        response = s.post(f'https://mbhtml.yundasys.com/gateway/ydmb-account/ydaccount/getImageVerifyCode', headers=self.yzmheaders,json=json_data)
+        point_info = response.json()
+        # print(f"get_yzm={point_info}")
+        if point_info['code']== 200:
+            # 背景图
+            shadeImage=point_info['data']['shadeImage']
+            # 滑块图
+            cutoutImage=point_info['data']['cutoutImage']
+            y=point_info['data']['y']
+            flag=point_info['data']['flag']
+            # Log(f'>>当前flag：【{flag}】')
+            # Log(f'>>当前y：【{y}】')
+            # 获取x值
+            x=self.get_yzm_x(cutoutImage,shadeImage)
+            # print(type(x))
+            # print(type(y))
+            imageCode=str(x)+"|"+str(y)
+            return flag,imageCode
+        else:
+            Log('可能token失效了')
+            return flag,0
+    
     def sign(self):
+        flag,imageCode=self.get_yzm()
+        # Log(f'>>当前flag：【{flag}】')
+        # Log(f'>>当前imageCode：【{imageCode}】')
         Log('>>>>>>签到')
+         #  flag有  imageCode第二个有
         json_data = {
-            'channelId': 'wxapp',
-            'itgType': 'sign',
-            'reqTime': int(time.time()),
-            'accountSrc': 'wxapp',
-            'accountId': self.token
+            "itgType": "sign",
+            "channelId": "wxapp",
+            "reqTime": int(time.time()),
+            "accountSrc": "wxapp",
+            "imageCode": imageCode,
+            "flag": flag,
+            "accountId": self.token
         }
         response = s.post(f'{self.baseUrl}obtain/event/integral', headers=self.headers,json=json_data)
         point_info = response.json()
@@ -119,10 +202,14 @@ class RUN:
         if point_info['code']== 200:
             msg=point_info['message']
             Log(f'>>签到成功,,{msg}')
+        elif point_info['code']== 803:
+            print(f">>1000 {point_info['message']}")
+            print(response.text)
         else:
             print(f">>{point_info['message']}")
-            # print(response.text)
+            print(response.text)
     def get_TaskList(self):
+        flag,imageCode=self.get_yzm()
         Log('>>>>>>获取任务列表')
         json_data ={
             "channelId": "wxapp",
@@ -131,6 +218,8 @@ class RUN:
             "businessType": "goldBetter",
             "reqTime": int(time.time()),
             "accountSrc": "wxapp",
+            "imageCode": imageCode,
+            "flag": flag,
             "accountId": self.token
         }
         response = s.post(f'{self.baseUrl}integral/event/list', headers=self.headers,json=json_data)
@@ -169,6 +258,8 @@ class RUN:
         # except:
         #     print(response.text)
     def watchAd(self,title):
+        flag,imageCode=self.get_yzm()
+
         json_data = {
             "action":"ydmbintegral.ydintegral.obtain.event.integral",
             "appid":"wjvxmno358lze827",
@@ -177,6 +268,8 @@ class RUN:
             "data":{
                 "accountId":self.token,
                 "accountSrc":"wxapp",
+                "imageCode": imageCode,
+                "flag": flag,
                 "reqTime":int(time.time()),"itgType":"wechat_viewadv"
                     },
             "version":"V1.0"}
@@ -190,11 +283,15 @@ class RUN:
             print(f">>{title},{point_info['message']}")
 
     def doTask(self,eventCode,title):
+        flag,imageCode=self.get_yzm()
+
         json_data = {
             'channelId': 'wxapp',
             'itgType': f'{eventCode}',
             'reqTime': int(time.time()),
             'accountSrc': 'wxapp',
+            "imageCode": imageCode,
+            "flag": flag,
             'accountId': self.token
         }
         response = s.post(f'{self.baseUrl}obtain/event/integral', headers=self.headers, json=json_data)
@@ -208,7 +305,8 @@ class RUN:
 
     def getDrawInfo(self):
         self.DrawHeaders = {
-            'Host': 'op.yundasys.com',
+            # 'Host': 'op.yundasys.com',
+            'Host': 'mbhtml.yundasys.com',
             'Accept': 'application/json, text/plain, */*',
             'X-Requested-With': 'XMLHttpRequest',
             'Authorization': self.token,
@@ -217,7 +315,8 @@ class RUN:
             'Sec-Fetch-Site': 'same-origin',
             'Sec-Fetch-Mode': 'cors',
             'Sec-Fetch-Dest': 'empty',
-            'Referer': 'https://op.yundasys.com/mb-ext-channel/index.html',
+            # 'Referer': 'https://op.yundasys.com/mb-ext-channel/index.html',
+            'Referer': 'https://mbhtml.yundasys.com/mb-ext-channel/index.html',
             'Accept-Language': 'zh-CN,zh',
         }
         json_data = {
@@ -225,9 +324,10 @@ class RUN:
             "accountId": self.token,
             "accountSrc": "wxapp"
         }
-        response = s.post(f'https://op.yundasys.com/gateway/ydmbaccount/ydaccount/mc/Itg/store/token', headers=self.DrawHeaders, json=json_data)
+        # response = s.post(f'https://op.yundasys.com/gateway/ydmbaccount/ydaccount/mc/Itg/store/token', headers=self.DrawHeaders, json=json_data)
+        response = s.post(f'https://mbhtml.yundasys.com/gateway/ydmbaccount/ydaccount/mc/Itg/store/token', headers=self.DrawHeaders, json=json_data)
         point_info = response.json()
-        # print(point_info)
+        print(f"point_info={point_info}")
         if point_info['code'] == 200:
             data = point_info['data']
             if data:
@@ -242,11 +342,14 @@ class RUN:
             'suid': 'gmrtxvrye6',
             'mwl_client_flag': 'wxapp',
         }
-        resp = s.post(f'https://op.yundasys.com/itgstoresys/api/lottery/drawNumber', headers=self.DrawHeaders, json=json_data)
+        # resp = s.post(f'https://op.yundasys.com/itgstoresys/api/lottery/drawNumber', headers=self.DrawHeaders, json=json_data)
+        resp = s.post(f'https://mbhtml.yundasys.com/itgstoresys/api/lottery/drawNumber', headers=self.DrawHeaders, json=json_data)
         res_info = resp.json()
         if res_info['code'] == 200:
             freeDrawNumber = res_info['data']['freeDrawNumber']
             print(f'>>剩余免费抽奖次数：【{freeDrawNumber}】')
+            print(f"getDrawNumber data={data}")
+
             if freeDrawNumber == 1:
                 self.doDraw(data)
 
@@ -254,30 +357,41 @@ class RUN:
             print(f">>{res_info['message']}")
 
     def doDraw(self,data):
+        print(f"doDraw data={data}")
+        flag,imageCode=self.get_yzm()
+        Log(f'>>当前flag：【{flag}】')
+        Log(f'>>当前imageCode：【{imageCode}】')
         res_data = {
             'activityId': 16,
             'plum_session_applet': data,
             'suid': 'gmrtxvrye6',
-            'mwl_client_flag': 'wxapp',
+            'mwl_client_flag': 'wxapp',       
+            "imageCode": imageCode,
+            "flag": flag
         }
-        resp = s.post(f'https://op.yundasys.com/itgstoresys/api/lottery/draw', headers=self.DrawHeaders, json=res_data)
-        res_info = resp.json()
-        if res_info['code'] == "200":
-            msg = res_info['message']
-            prizeName = res_info['data']['prizeName']
-            Log(f'>>{msg},获得{prizeName}')
+        # resp = s.post(f'https://op.yundasys.com/itgstoresys/api/lottery/draw', headers=self.DrawHeaders, json=res_data)
+        resp = s.post(f'https://mbhtml.yundasys.com/gateway/ydmb-integral/ydintegral/integralLottery', headers=self.DrawHeaders, json=res_data)
+        print(f"doDraw status_code={resp.status_code}")
+        if resp.status_code==200:
+            res_info = resp.json()
+            if res_info['code'] == "200":
+                msg = res_info['message']
+                prizeName = res_info['data']['prizeName']
+                Log(f'>>{msg},获得{prizeName}')
+            else:
+                Log(f">>{res_info['message']}")
         else:
-            Log(f">>{res_info['message']}")
+            Log(f">抽奖失败 404 或token失效 或者验证码有问题")
 
 
     def main(self):
         Log(f"\n开始执行第{self.index}个账号--------------->>>>>")
         if not self.get_point():
             return False
-        self.sign()
-        self.get_TaskList()
+        # self.sign()
+        # self.get_TaskList()
         self.getDrawInfo()
-        self.sendMsg()
+        # self.sendMsg()
         return True
 
     def sendMsg(self):

@@ -388,10 +388,10 @@ class RUN:
         Log(f"\n开始执行第{self.index}个账号--------------->>>>>")
         if not self.get_point():
             return False
-        # self.sign()
-        # self.get_TaskList()
+        self.sign()
+        self.get_TaskList()
         self.getDrawInfo()
-        # self.sendMsg()
+        self.sendMsg()
         return True
 
     def sendMsg(self):

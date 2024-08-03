@@ -23,7 +23,7 @@
 
 # <h2 align="center">✨开发维护不易，邀请类脚本请走作者链接，喜欢请打赏，谢谢</h2>
 
-## ✨自助挂机：[https://gj.cherwin.cn](https://gj.cherwin.cn)
+## ✨自助挂机：
 
 ## ✨更新历史
 - <b>2024.08.05</b>

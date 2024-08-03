@@ -357,18 +357,32 @@ class RUN:
             print(f">>{res_info['message']}")
 
     def doDraw(self,data):
-        print(f"doDraw data={data}")
+        # print(f"doDraw data={data}")
         flag,imageCode=self.get_yzm()
-        Log(f'>>当前flag：【{flag}】')
-        Log(f'>>当前imageCode：【{imageCode}】')
+        # Log(f'>>当前flag：【{flag}】')
+        # Log(f'>>当前imageCode：【{imageCode}】')
         res_data = {
             'activityId': 16,
-            'plum_session_applet': data,
+            'plumSessionApplet': data,
             'suid': 'gmrtxvrye6',
-            'mwl_client_flag': 'wxapp',       
+            'mwlClientFlag': 'wxapp',       
+            "accountSrc": "wxapp",
             "imageCode": imageCode,
-            "flag": flag
+            "flag": flag,
+            "reqTime": int(time.time()),
+            "accountId":  self.token
         }
+        # {
+        #     "activityId": 16,
+        #     "flag": "d   d",
+        #     "imageCode": "105|79",
+        #     "plumSessionApplet": "6  9",
+        #     "suid": "gmrtxvrye6",
+        #     "mwlClientFlag": "wxapp",
+        #     "reqTime": 17  2,
+        #     "accountSrc": "wxapp",
+        #     "accountId": "o  "
+        # }
         # resp = s.post(f'https://op.yundasys.com/itgstoresys/api/lottery/draw', headers=self.DrawHeaders, json=res_data)
         resp = s.post(f'https://mbhtml.yundasys.com/gateway/ydmb-integral/ydintegral/integralLottery', headers=self.DrawHeaders, json=res_data)
         print(f"doDraw status_code={resp.status_code}")
@@ -379,7 +393,8 @@ class RUN:
                 prizeName = res_info['data']['prizeName']
                 Log(f'>>{msg},获得{prizeName}')
             else:
-                Log(f">>{res_info['message']}")
+                # Log(f">>{res_info['message']}")
+                Log(f">抽奖失败 参数有问题 或者验证码有问题 {resp.json()} {res_info['message']}")
         else:
             Log(f">抽奖失败 404 或token失效 或者验证码有问题")
 

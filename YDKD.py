@@ -388,7 +388,7 @@ class RUN:
         print(f"doDraw status_code={resp.status_code}")
         if resp.status_code==200:
             res_info = resp.json()
-            if res_info['code'] == "200":
+            if res_info['code'] == 200:
                 msg = res_info['message']
                 prizeName = res_info['data']['prizeName']
                 Log(f'>>{msg},获得{prizeName}')

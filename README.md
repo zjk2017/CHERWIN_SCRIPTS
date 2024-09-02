@@ -5,30 +5,16 @@
 
 # <h1 align="center">✨CHERWIN脚本使用指南 ✨</h1>
 
-<h2 align="center"><a href="https://github.com/CHERWING/CHERWIN_SCRIPTS/wiki/%E2%9C%A8-CHERWIN%E8%84%9A%E6%9C%AC%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97-%E2%9C%A8">点击查看详细使用说明</a></h2>
-
-<h2 align="center">✨在上海开了家打金店，有忙最近，佛系更新，脚本全开源，有能力自己改改</h2>
 
 
-<p align="center">
-  <img src="https://github.com/CHERWING/CHERWIN_SCRIPTS/assets/160421895/1c8a0f41-fb92-4b0e-abd1-0d85cba0081f" width="150">
-</p>
-<p align="center">
-点评码，有需要可以来店支持一下
-</p>
-
-<p align="center">
-  <img src="https://github.com/CHERWING/CHERWIN_SCRIPTS/assets/160421895/691b9f30-7d5c-4b55-8af0-0e8f14b6a424" width="150">
-</p>
-
-# <h2 align="center">✨开发维护不易，邀请类脚本请走作者链接，喜欢请打赏，谢谢</h2>
-
-## ✨自助挂机：
 
 ## ✨更新历史
-- <b>2024.08.05</b>
+- <b>2024.09.03</b>
     - 增加顾家天禧派小程序本
     - 韵达抽奖修复
+    - 顾家修复
+    - 劲友家修复部分任务
+      # <h1 align="center">✨此库20240903以后不再更新 去主库 https://github.com/zjk2017/ArcadiaScriptPublic  [频道：https://t.me/ArcadiaScript 群组：https://t.me/ArcadiaScriptPublic](频道：https://t.me/ArcadiaScript 群组：https://t.me/ArcadiaScriptPublic)✨</h1>
 
 - <b>2024.06.05</b>
     - 春茧未来荟小程序 增加反代设置
